@@ -7,7 +7,7 @@
 
 ; Rule Input: 
 
-(defrule input-data
+(defrule input_data
    (declare (salience 100))
    =>
    (printout t "Masukkan suhu (dalam Celsius): ")
@@ -17,30 +17,30 @@
    (printout t "Tekanan udara (tinggi/rendah): ")
    (bind ?t (read))
 
-   (assert (input-suhu ?s))
-   (assert (input-langit ?l))
-   (assert (input-tekanan ?t))
+   (assert (input_suhu ?s))
+   (assert (input_langit ?l))
+   (assert (input_tekanan ?t))
 )
 
 
 ; Aturan Validasi Input:
 
-(defrule validasi-input
+(defrule validasi_input
    (declare (salience 90))
-   (input-suhu ?s)
-   (input-langit ?l)
-   (input-tekanan ?t)
+   (input_suhu ?s)
+   (input_langit ?l)
+   (input_tekanan ?t)
    =>
    (if (and (numberp ?s)
             (or (eq ?l cerah) (eq ?l mendung))
             (or (eq ?t tinggi) (eq ?t rendah)))
       then
          (assert (suhu ?s))
-         (assert (kondisi-langit ?l))
-         (assert (tekanan-udara ?t))
-         (assert (data-valid))
+         (assert (kondisi_langit ?l))
+         (assert (tekanan_udara ?t))
+         (assert (data_valid))
       else
-         (assert (data-invalid))
+         (assert (data_invalid))
    )
 )
 
@@ -48,53 +48,53 @@
 ; Aturan Prediksi:
 
 
-(defrule prediksi-cerah
-   (data-valid)
+(defrule prediksi_cerah
+   (data_valid)
    (suhu ?s&:(> ?s 28))
-   (kondisi-langit cerah)
-   (tekanan-udara tinggi)
+   (kondisi_langit cerah)
+   (tekanan_udara tinggi)
    =>
    (assert (cuaca cerah))
 )
 
-(defrule prediksi-hujan
-   (data-valid)
-   (kondisi-langit mendung)
-   (tekanan-udara rendah)
+(defrule prediksi_hujan
+   (data_valid)
+   (kondisi_langit mendung)
+   (tekanan_udara rendah)
    =>
    (assert (cuaca hujan))
 )
 
-(defrule prediksi-berawan
-   (data-valid)
-   (kondisi-langit mendung)
-   (tekanan-udara tinggi)
+(defrule prediksi_berawan
+   (data_valid)
+   (kondisi_langit mendung)
+   (tekanan_udara tinggi)
    =>
    (assert (cuaca berawan))
 )
 
-(defrule prediksi-sejuk
-   (data-valid)
+(defrule prediksi_sejuk
+   (data_valid)
    (suhu ?s&:(<= ?s 28))
-   (kondisi-langit cerah)
-   (tekanan-udara tinggi)
+   (kondisi_langit cerah)
+   (tekanan_udara tinggi)
    =>
    (assert (cuaca sejuk))
 )
 
-(defrule prediksi-tidak-dapat-ditentukan
+(defrule prediksi_unpredicted
    (declare (salience -10))
-   (data-valid)
+   (data_valid)
    (suhu ?)
-   (kondisi-langit ?)
-   (tekanan-udara ?)
+   (kondisi_langit ?)
+   (tekanan_udara ?)
    (not (cuaca ?))
    =>
-   (assert (cuaca tidak-dapat-ditentukan))
+   (assert (cuaca tidak_dapat_ditentukan))
 )
 
-(defrule prediksi-error
-   (data-invalid)
+(defrule prediksi_error
+   (data_invalid)
    =>
    (assert (cuaca error))
 )
@@ -103,55 +103,43 @@
 ; Output:
 
 
-(defrule output-cerah
+(defrule output_cerah
    (cuaca cerah)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "Prediksi cuaca: CERAH" crlf)
-   (printout t "==========================" crlf)
+   (printout t crlf "Prediksi cuaca: CERAH" crlf)
 )
 
-(defrule output-hujan
+(defrule output_hujan
    (cuaca hujan)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "Prediksi cuaca: HUJAN" crlf)
-   (printout t "==========================" crlf)
+   (printout t crlf "Prediksi cuaca: HUJAN" crlf)
 )
 
-(defrule output-berawan
+(defrule output_berawan
    (cuaca berawan)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "Prediksi cuaca: BERAWAN" crlf)
-   (printout t "==========================" crlf)
+   (printout t crlf "Prediksi cuaca: BERAWAN" crlf)
 )
 
-(defrule output-sejuk
+(defrule output_sejuk
    (cuaca sejuk)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "Prediksi cuaca: CERAH SEJUK" crlf)
-   (printout t "==========================" crlf)
+   (printout t crlf "Prediksi cuaca: CERAH SEJUK" crlf)
 )
 
-(defrule output-tidak-dapat-ditentukan
-   (cuaca tidak-dapat-ditentukan)
+(defrule output_tidak_dapat_ditentukan
+   (cuaca tidak_dapat_ditentukan)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "Prediksi cuaca: TIDAK DAPAT DITENTUKAN" crlf)
+   (printout t crlf "Prediksi cuaca: TIDAK DAPAT DITENTUKAN" crlf)
    (printout t "Kombinasi kondisi tidak sesuai" crlf)
-   (printout t "==========================" crlf)
 )
 
-(defrule output-error
+(defrule output_error
    (cuaca error)
    =>
-   (printout t crlf "==========================" crlf)
-   (printout t "ERROR: Fakta tidak cukup!" crlf)
+   (printout t crlf "ERROR: Fakta tidak cukup!" crlf)
    (printout t "Input harus:" crlf)
    (printout t "- Suhu: angka" crlf)
    (printout t "- Langit: cerah/mendung" crlf)
    (printout t "- Tekanan: tinggi/rendah" crlf)
-   (printout t "==========================" crlf)
 )
